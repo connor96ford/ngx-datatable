@@ -183,7 +183,8 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
           row: this.row,
           group: this.group,
           column: this.column,
-          value: this.value ,
+          value: this.value,
+          unpipedValue: this.unpipedValue,
           rowHeight: this.rowHeight
         });
 
@@ -229,6 +230,7 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
 
   sanitizedValue: any;
   value: any;
+  unpipedValue: any
   sortDir: SortDirection;
   isFocused: boolean = false;
   onCheckboxChangeFn = this.onCheckboxChange.bind(this);
@@ -240,6 +242,7 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
     row: this.row,
     group: this.group,
     value: this.value,
+    unpipedValue: this.unpipedValue,
     column: this.column,
     rowHeight: this.rowHeight,
     isSelected: this.isSelected,
@@ -275,22 +278,24 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
 
   checkValueUpdates(): void {
     let value = '';
+    let unpipedValue = '';
 
     if (!this.row || !this.column) {
       value = '';
     } else {
-      const val = this.column.$$valueGetter(this.row, this.column.prop);
+      const unpipedValue = this.column.$$valueGetter(this.row, this.column.prop);
       const userPipe: PipeTransform = this.column.pipe;
 
       if (userPipe) {
-        value = userPipe.transform(val);
+        value = userPipe.transform(unpipedValue);
       } else if (value !== undefined) {
-        value = val;
+        value = unpipedValue;
       }
     }
 
     if(this.value !== value) {
       this.value = value;
+      this.unpipedValue = unpipedValue;
       this.cellContext.value = value;
       this.sanitizedValue = value !== null && value !== undefined ? this.stripHtml(value) : value;
       this.cd.markForCheck();
@@ -317,6 +322,7 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
       rowHeight: this.rowHeight,
       column: this.column,
       value: this.value,
+      unpipedValue: this.unpipedValue,
       cellElement: this._element
     });
   }
@@ -331,6 +337,7 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
       rowHeight: this.rowHeight,
       column: this.column,
       value: this.value,
+      unpipedValue: this.unpipedValue,
       cellElement: this._element
     });
   }
@@ -359,6 +366,7 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
         rowHeight: this.rowHeight,
         column: this.column,
         value: this.value,
+        unpipedValue: this.unpipedValue,
         cellElement: this._element
       });
     }
@@ -373,6 +381,7 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
       rowHeight: this.rowHeight,
       column: this.column,
       value: this.value,
+      unpipedValue: this.unpipedValue,
       cellElement: this._element,
       treeStatus: 'collapsed'
     });
